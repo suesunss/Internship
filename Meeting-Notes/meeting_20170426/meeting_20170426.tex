@@ -1,0 +1,49 @@
+\documentclass{article}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage[utf8]{inputenc}
+
+
+\title{Meeting notes}
+\author{Shu SHANG}
+% \person{Ioana Manolescu, Yanlei DIAO, Shu SHANG}
+\date{26/04/2017}
+
+\begin{document}
+\maketitle
+
+\section{Main points}
+\begin{itemize}
+	\item User in-the-loop {\em vs.} automatic way
+	\begin{itemize}
+		\item We choose to start from the automatic way bacause it is the basic problem of this project.
+		\item User in-the-loop can be extended to it after we handle the automatic way.
+	\end{itemize}
+	\item What make a visualization interesting? 
+	\begin{itemize}
+		\item An interesting report {\em \href{http://www.lemonde.fr/les-decodeurs/portfolio/2017/04/18/les-fractures-francaises-1-5-le-logement-les-raisons-de-la-crise_5112859_4355770.html}{Les fractures françaises: le logement, les raisons de la crise}}
+		\begin{itemize}
+			\item We are interested in visualizations having {\bf time series} as one of its axis.
+			\begin{itemize}
+				\item How? We can {\bf Group by time } (Especially, {\bf by year} should be interesting as year has few distinct values, spaning over a large range. We can also think about {\bf group by month...})
+				\item Put several subsets of data together. For instance, in the case of {\em Fractures française}, we are interested in 4 subsets of tenant: 1. {\bf locataire parc social} 2. {\bf locataire secteur libre} 3. {\bf accédants à la propriété} 4. {\bf propriétaires san prêt en cours}. The question is: How much of their annual revenue did they use to cover their loyer/loan during the past ten years? $\rightarrow$ We can get 4 visualizations for each subset of the data, each visualization has year as X-axis and the percentage of revenue as Y-axis. $\rightarrow$ We can then compare the results of 4 subsets. ({\bf Scale} problems? How can we automatically analyze the 4 subsets are comparable? What kinds of metric should we propose to analyze the differences of the 4 visualizations?)
+				\item In the example above, one or more results may stand out compared with others, the visualization can thus become more interesting. Here, we may have a particular subset of people we concern most, other groups can viewed as reference data (Recall the seedb example). In some cases, visualization shows interesting insights compared with some reference data (For instance, between {\bf prix de logement} vs. {\bf time} and {\bf revenu} vs. {\bf time}), while others originally show interesting insight (For instance, trend of house price over time).
+				\item Think about proposing new metrics (For instance, SEEDB proposed a new metric {\em Utility} based on deviation...) to compare the differences of visualizations and find interesting ones.
+			\end{itemize}
+			\item We are intereted in some quantile features
+			\begin{itemize}
+				\item For instance, in the example of {\em Fractures française}, 4-quantiles: les 25\% les plus modestes, deuxième quartile, troisième quartile, les 24\% les plus aisés. (quartiles based on revenue)
+			\end{itemize}
+		\end{itemize}
+	\end{itemize}
+\end{itemize}
+
+\section{Next}
+\begin{itemize}
+	\item Transformation from bar chart to trend line
+	\item Think about the ideas proposed in the meeting, visualizations having time series as axis, visualizations having quantile features...
+\end{itemize}
+\end{document}
