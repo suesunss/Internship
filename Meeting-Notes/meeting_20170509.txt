@@ -1,0 +1,179 @@
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+Meeting notes of 09/05/2017
+Present: Yanlei, Shu
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Pseudocode of the algorithm
+version 0.2 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+> Input: RDF graph G (+ User focus query Qu)
+> Output: Interesting group-by + aggregation query (a, m ,f)
+
+------------------------------
+Function queryRecommendation(graph G, query Qu)
+// Query recommendation engine
+// Givn a graph G and user input focus query Qu (can be ignored)
+// Recommend a set of queries that the engine evaluted interesting
+------------------------------
+    D <- G
+    Initialize CF a empty set as the target subset of original dataset D (classified facts)
+    Initialize CD as a set of candidate dimensions
+    Initialize CM as a set of candidate measures
+    Initialize V as a set of recommended queries used for visualizations 
+
+    If Qu is not empty Then
+        CF <- Qu(D)  // CF is the result of Qu over D
+        Q <- generateQuery(CF, CD, CM, CA)   // return a set of query generated
+        For each query q in Q do 
+            score <- evaluateQuery(q)
+            if score >= threshold h1 Then 
+                V <- V U {q}  // add q to the set of recommended qeuries
+            End 
+        End 
+    Else
+        // starting from resources having a certain property (Type query) 
+        {t} <- getAllTypes(D) // return a set containing all distinct types that all resources in D have
+        For each ti in {t} do   
+            CF <- Dti // Dti: resources having the type ti
+            Q <- generateQuery(CF, CD, CM, CA)   // return a set of query generated
+            For each query q in Q do 
+                score <- evaluateQuery(q)
+                if score >= threshold h1 Then 
+                    V <- V U {q}  // add q to the set of recommended qeuries
+                End 
+            End 
+        End
+
+        // Then, second way, using resources having the most frequent set of properties (MFP)
+        MFP <- getMostFrequentSetOfProperties(D)
+        CF <- getResourcesHavingProperties(D, MFP)
+        Q <- generateQuery(CF, CD, CM)   // return a set of query generated
+        For each query q in Q do 
+            score <- evaluateQuery(q)
+            if score >= threshold h1 Then 
+                V <- V U {q}  // add q to the set of recommended qeuries
+            End 
+        End
+    End
+    return V
+End
+        
+--------------------------------------
+Function generateQuery(set CF, set CD, set CM)
+--------------------------------------
+    {p} <- getAllDistinctProperties(CF) // return a set of distinct properties that a certain type of resources(CF) has
+    For each pi in {p} do 
+        {o} <- getAllDistinctObjects(CF) // return a set of distinct objects that a certain type of resources(CF) has by the property pi
+        n1 = sizeof({o}) // the number of distinct objects the resources having a certain type have by the property pi
+        n2 = sizeof(CF) // the number of resources having a certain type pi
+        If n1/n2 <= threshold h Then
+            CD <- CD U {pi} // add pi to the set of candidate dimensions
+        Else
+            {pi_reduced} <- domainReduction(pi) // return a set of reduced properties
+            if {pi_reduced} is not empty Then
+                For each pir in pi_reduced do 
+                    {o_pir} <- getAllDistinctObjects(pir)
+                    n1 = sizeof({o_pir})
+                    n2 = sizeof(CF)
+                    If n1/n2 <= threshold h Then 
+                        CD <- CD U {pi_r}
+                    End
+                End
+            End
+        End
+    End
+    
+    For each pi in {p} do 
+        If pi is not in CD and supportedProperty(CF, pi) is true Then
+            CM <- CM U {pi}  // add this attribute to the set of candidate measures
+    End
+
+    Initialize Q as a set of queries generated
+    
+    // Generate queries based on CD, CM and aggregate functions
+    For each di in CD do
+        If CM is not empty Then
+            // we can aggregate over the measures in CM, we can also aggregate over the measures in CD except di
+            For each mi in CM do 
+                If mi is numeric value Then 
+                    // each query is translated into a triple (classifier, measure, aggregate function)
+                    Q <- Q U {(di, mi, count()), (di, mi, avg()), (di, mi, sum())}  // For measures having numeric values, agg function can be count(), avg() or sum()
+                Else
+                    Q <- Q U {(di, mi, count())}        
+                End 
+            End
+            For each di_m in CD and di_m is not di Then
+                If di_m is numeric value Then 
+                    // each query is translated into a triple (classifier, measure, aggregate function)
+                    // For measures having numeric values, agg function can be count(), avg() or sum()
+                    Q <- Q U {(di, di_m, count()), (di, di_m, avg()), (di, di_m, sum())}  
+                Else
+                    Q <- Q U {(di, di_m, count())}        
+                End 
+            End
+        Else 
+            Q <- {(di, mi, count(*))} // count the number of facts per group, like count(id), as no measure is proposed in CM 
+        End
+    End
+    return Q
+End
+
+
+
+-------------------------------
+Function evaluateQuery(query q)
+// Function used to evalute the query generated by using metric variance(the second moment)
+-------------------------------
+
+
+----------------------
+Function getAllType(D)
+// Given a graph dataset D, return all the types present in this graph
+----------------------
+
+
+--------------------------------------------------
+Function getMostFrequentSetOfProperties(dataset D)
+// function/module returning the most frequent set of properties for a given graph dataset D
+--------------------------------------------------
+
+-------------------------------------------------------
+Function getResourcesHavingProperties(set p, dataset D)
+// function returnning all the resources having a set of properties p for a given graph dataset D
+-------------------------------------------------------
+
+
+-------------------------------------------
+Function supportedProperty(CF, property pi)
+// Check if a property is well supported for a givin data CF
+// This is checked by traverse all the resources of CF, for each resource, check if it has a certain property pi
+// If the total number of resources having a certain property pi is less than a threshold, then the property is not well supported and return false
+// Otherwise, this function return true
+-------------------------------------------
+
+-------------------------------------
+Function getAllDistinctProperties(CF)
+// For a given classfied facts to be analyzed (resources), return all the distinct properties that the resources have
+-------------------------------------
+
+----------------------------------------------
+Function getAllDistinctObjects(CF, property p)
+// For a given classfied facts to be analyzed (resources) and a given property, return all the distinct obejcts of this property that the resources have
+----------------------------------------------
+
+--------------------------------------------
+Function domainReduction(property p, set CF)
+// Used to do domain reduction like spliting datetime (or date) into year, month, day...
+// Return reduced dimensions if it is possible, otherwise return an empty set
+// Enrich the corresponding CF at the same time. For instance, if date is splited into 3 parts: year, month and day, the graph CF will be enriched by
+// adding the corresponding pi and its value as edge and connected node
+--------------------------------------------
+
+
+
+ ~~~~~
+ Next
+ ~~~~~
+ - Implement the idea, starting from Type query, using DBLP dataset
