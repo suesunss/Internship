@@ -1,0 +1,25 @@
+Meeting 16/05/2017
+Present: Shu, Ioana
+
+- about the pseudocode
+
+The domain reduction could be settled later. For now, concentrate on the skeleton of code. Also for the user focused query. 
+
+For threshold of "few distinct values", take 1/1000 for example. But these thresholds can be parametered. 
+
+
+- about dataset
+
+The dataset can be downloaed from data.oak.saclay.inria.fr using LDAP username.
+
+The datase is in n-triples(.nt) format, it can be loaded to a relational database using: copy name_database 'path/to/file'
+
+Of course, we can create other tables to help the analytics of rdf data, like encoding, but usually starting with the n-triples file is a good choice.
+
+To download dataset from remote oak server:  scp sshang@data.oak.saclay.inria.fr:/datanfs/roatis/datasets/dblp/dblp.rdf .
+
+
+
+
+
+

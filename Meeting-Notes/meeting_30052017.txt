@@ -1,0 +1,12 @@
+Meeting notes 
+
+Present: Yanlei, Shu
+
+Date: 30/05/2017
+
+1. The normalization has a problem:  it's not to normalize the calculated variance. After each execution of (dimension, measure), we get a list of values. We should normalize these values so that they can be used to compare with other results of (dimension, measure) pairs. 
+(Fix!)
+
+2. About type problem: 	To infer the object data type of each property, try to ask people if they have already touched these problems. May also try the type parser of postgresSQL, for instance. The primitive types like float, int, real number, date ... are the most important ones. 
+
+3. About architecture, I use Java program to generate the .csv files used to visualize, then using python script (and the matplotlib library) to do the visualization. 

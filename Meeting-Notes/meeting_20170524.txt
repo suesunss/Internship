@@ -1,0 +1,42 @@
+-------------
+Meeting notes
+------------- 
+
+Date: 24-05-2017
+Present: Ioana, Yanlei, Shu
+
+
+-------------------------
+1. Normalize the variance 
+-------------------------
+
+- The variance statistic should be normalized because if we want to set a **threshold** for the varaince to get the most interesting ones, we must know that
+all the variances (for instance, all the variances of a given type resources, using each pair of candidate dimension and measure, aggregate over this measure using count function) show up in which interval (the domain range, like in Machine Learning, the scaling process to make sure that the features can be compared).
+
+
+--------------------------
+2. Visualization Issues
+--------------------------
+
+- The output should be a set of counts of desc order of variance, each pattern (dimension, measure, count result) could be stored in a tsv file and visualized by software Gnuplot.
+
+- Writing a small module using the library gnuplot to get the top-k visualizations, i.e, the generating plots should be automated so that we don't have the need to do this in Excel. 
+
+--------------------------
+2. Parser
+--------------------------
+ 
+- For each subject and property, it can have more than one objects because the heterogeneity of RDF data. And for a certain property, the object format can vary. For objects in URI format, we can explicitly know it because they always start with 'http:// ... '. But for others like date, the object format may vary from one context to another. Maybe in one dataset, the date format is something like '2017-05-20', however in another dataset the format is something like '20/05/2017'. So we need a parser to parse different objects in differents literal formats but corresponding to the same property (recognize patterns, 'type detector').
+
+- Try to look for some ideas on the Internet, or some ideas have been used in other cedar projects.
+
+--------------------------
+2. Time Series
+--------------------------
+
+- 2 ways: 
+	a.) group by dimensions like 'publisher', then group by time, for instance. We can get plot having several lines categorized by publisher, with time as x-axis (recall the
+	report 'les fractures francaises'). Several groups of publisher may show large variances with time series.
+	b.) group by time, aggregate over measure, then we get time as x-axis and aggregation results as y-axis. 
+
+- Time extracted dimensions: If time contain year + month + day (like 'date'), it's more interesting to extract 'year + month' or simply 'year' from date format, enriching the original dataset by adding new triples. We call this derived tirples (or property). Then grouping by these dimensions may be interesting compared to grouping by date.
