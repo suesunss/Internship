@@ -1,0 +1,72 @@
+Meeting notes 
+
+Present: Ioana, Shu
+
+Date: 07/06/2017
+
+------------------
+Derived Attribute 
+------------------
+We use one attribute as dimension and another attribute as measure, then count over the measure, i.e (dimension, measure, count). However,
+some count over measure may not meaningful or could be simplified as count(*). 
+
+For instance, Type article, (volume, pages, count) could be simplified as count(*) because every article has exactly one property **pages**. (heterogeneity == 1). It means that attribute(measure) showing only 0 or 1 time for a given CF, count(*) is as good as count over measure.
+
+If an attribute can show up 0, 1 or more times ==> make a derived attribute of count(), then 2 possibilities: 1) count(*) as usual 2) aggregate using avg() function, to get the average statistics. For instance, for each volume, the average number of creators (Here, we need a derived attribute num_of_creators). Attention, after deriving the attribute, we should recalculate the variance of new result set.
+
+
+-------------
+Type Problem
+-------------
+
+Using majority vote way to get the type of attribute 
+-----------------------------------------------------
+After getting the result set by quering using the dimension and measure attribute, we get the two columns: one is grouped dimension, the other is the aggregation result over measure. 
+
+For instance, if the x-axis is of type year, the value of x-axis should be in asc/desc order so that we can make it into time-series. Another example, if the x-axis is volume, we need that it's in increasing/decreasing order so that we can get the trend of aggregation results along with an increasing/decreasing amount of volume.
+
+The attribute need to be typed to do this. To get the type, we could use 'Majority vote' way to infer the data type of the value set that we get.
+
+
+---------
+Algorithm
+---------
+
+NVal <- the number of values in a set 
+NInt <- the number of int numbers in a set
+NDateYMD <- the number of date of format YY-MM-DD in a set 
+NDateYM <- the number of date of format YY-MM in a set
+NDateY <- the number of date of format year[*3] in a set
+
+initialize NVal, NInt, NDateYMD, NDateYM and NDateY to 0
+
+For each value v in a value set V
+	If v can be converted[*1] to a int number, Then NInt++
+	If v can be converted to a date type of format YY-MM-DD[*2], Then NDateYMD++
+	If ..
+
+	VVal++
+
+
+If max{NInt, NDateYMD, NDateYM, NDateY} is NInt AND NInt > 80%NVal
+	Then majority type is Int
+Else If max{NInt, NDateYMD, NDateYM, NDateY} is NDateYMD and NDateYMD > 80%NVal
+	Then majority type is date of format YY-MM-DD
+...
+
+Else 
+	The majority type is String
+
+Return majority type
+
+
+-- NB -- 
+[*1] To parse/convert the data into data type we pre-defined, we need a parser. We could use regular expression to do this.
+
+[*2]  In some cases, the date type need to be fixed to fit the format, for instance, DD/MM/YY is not in format YY-MM-DD, we need also recognize it as a date. To do this, in each case of fitting, go over all values that don't fit, try to fix them. 
+	For instance, if the majority type is date in format YY-MM-DD:
+		 - "DD-MM-YY" could be fixed, we can convert it to YY-MM-DD. 
+		 - We see a data containing only year, then we need add manually the month and day (01/01 by default, for instance)
+	If no fix works, discard the data from analysis set. 
+
+[*3] For year, be careful about the range, for instance, the year of dblp dateset should be in [1900, 2017]. Make this configurable because in another dateset, the range could change.
