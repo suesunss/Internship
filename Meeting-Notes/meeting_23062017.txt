@@ -1,0 +1,59 @@
+Meeting Ioana/Yanlei/Shu 
+
+23-06-2017
+
+
+1.) About the plots, give some evidences to prove the correcteness of the results. (For instance, some resources of type book can have more than 1 attribute of 'year'? )
+
+
+2.) There should have some materilized tables that we can used to get the information that the program calculated during the run.
+
+For instance, the if we inferred that Volume is of type Integer. 
+
+table: p = volume
+==> s  |  o 
+column o can be explicly set as Integer type
+
+For the rest that doesn't fit, use another table s | o where o is of type *STRING* to store
+
+make sure to not loss Integrity Constraint
+
+
+3.) Measure Threshold Policy
+
+If a candidate fact has a measure such that **more than a threshold h1 number of candidate facts** have at most one value for that measure, then do not count(measure) as the aggregation and count(*) instead. [soft/mostly unique constraint]
+
+for the derived atribute num_of_** (of type int), it's good to do the avg() but not count(*)
+
+4.) another aggregate pruning 
+
+see Ioana's mail
+
+--- 
+let CF be a candidate fact e.g. book
+some dimension D
+let A1, A2 be attributes  of CF such that there is a soft functional
+dependency from CF to A1 (most  CFs have 0 or 1 instance of A1)
+and similarly a soft functional dependency from CF to A2.
+e.g. A1=title, A2=publisher
+
+when considering A1 as a measure, we already said  that COUNT(A1),
+e.g. COUNT(title), is not an interesting aggregate and instead we
+should have COUNT(*);
+
+now you can see that the same will happen when considering A2 as a
+measure, i.e. we will find that COUNT(A2) is not an interesting
+aggregate and instead we take COUNT(*) -- the same *, the same CF, the
+same dimension.
+
+These two aggregates with CF, D, a measure (A1 resp A2) which we
+basically ignore, and COUNT(*),  are  very close, but not identical:
+
+the first will reflect the CFs having at least one A1 and the second
+will reflect the CFs having at least one A2...
+
+So it would be good to find a method so that
+if such aggregates DIFFER VERY LITTLE (basically there is a strong
+overlap between the CFs that have A1 and those that have A2)
+we should only include one of them in the top-K, not include the
+second, and thus leave a spot for another interesting aggregate!

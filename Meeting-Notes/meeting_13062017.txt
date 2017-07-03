@@ -1,0 +1,16 @@
+-------- 
+datatype
+--------
+
+The string constant:
+
+"A Polynomial Method for Finding Irregularities in Large Example Sets"
+
+of which we inform you that it is of the type ^^
+
+XML Literal 
+
+as defined in the document describing the XML RDF syntax: http://www.w3.org/1999/02/22-rdf-syntax-ns
+
+"Zur natu00FCrlichsprachlichen interaktiven Unterstu00FCtzung im Datenbankentwurf."	#XMLLiteral
+
